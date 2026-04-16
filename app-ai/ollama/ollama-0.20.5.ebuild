@@ -12,9 +12,21 @@ mirror://macaroni/ollama-0.20.5-mark-go-bundle-80d3744.tar.xz -> ollama-0.20.5-m
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
-IUSE="systemd"
+IUSE="systemd clang cuda vulkan"
 BDEPEND=">=dev-lang/go-1.24
+	clang? ( sys-devel/clang )
 	
+"
+RDEPEND="vulkan? (
+	  media-libs/vulkan-loader
+	  media-libs/shaderc
+	)
+	cuda? (
+	  dev-util/nvidia-cuda-toolkit
+	)
+	
+"
+DEPEND="${RDEPEND}
 "
 
 post_src_unpack() {
@@ -26,6 +38,19 @@ pkg_setup() {
 	ebegin "Ensuring ollama user/group exist"
 	enewgroup ollama
 	enewuser ollama -1 -1 /var/lib/ollama ollama
+}
+src_configure() {
+	local mycmakeargs=(
+	  -DGGML_CUDA=$(usex cuda ON OFF)
+	  -DGGML_VULKAN=$(usex vulkan ON OFF)
+	)
+	if use clang ; then
+	  mycmakeargs+=(
+	    -DCMAKE_C_COMPILER=clang
+	    -DCMAKE_CXX_COMPILER=clang++
+	  )
+	fi
+	cmake_src_configure
 }
 src_prepare() {
 	default
