@@ -40,6 +40,7 @@ pkg_setup() {
 	enewuser ollama -1 -1 /var/lib/ollama ollama
 }
 src_configure() {
+	addpredict /proc/self/task
 	local mycmakeargs=()
 	if use clang ; then
 	  mycmakeargs+=(
