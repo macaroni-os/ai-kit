@@ -99,7 +99,6 @@ src_configure() {
 	  -DGGML_VULKAN=$(usex vulkan ON OFF)
 	  -DGGML_BLAS_VENDOR=Generic
 	  -DGGML_CUDA_ENABLE_UNIFIED_MEMORY=1
-	  -DLLAMA_USE_PREBUILT_UI=OFF
 	)
 	local cuda_archs= cuda_major= cuda_supported=
 	local arch cuda_flagged=() cuda_dropped=()
